@@ -395,8 +395,16 @@ class bigjob(api.base.bigjob):
 
         return self.pilot_url
     
-    def get_nodes(self):
-        return self.coordination.get_nodes(self.pilot_url)
+    def get_nodes(self):        
+        while True:
+            nodeStr = self.coordination.get_nodes(self.pilot_url)
+            if nodeStr != None:
+                break
+            time.sleep(2)        
+        nodeList = eval(nodeStr)
+        nodeList = [i.replace('\n','') for i in nodeList]
+        return nodeList
+        
     
     def list_subjobs(self):
         sj_list = self.coordination.get_jobs_of_pilot(self.pilot_url)
